@@ -37,6 +37,7 @@ const io = new Server(httpServer, {
 
 // Middleware
 app.use(helmet({
+  contentSecurityPolicy: false,
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
