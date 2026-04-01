@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar';
 import MessageList from '../components/MessageList';
 import MessageInput from '../components/MessageInput';
 import { Menu, Hash, Users, Bell } from 'lucide-react';
+import { API_BASE } from '../config';
 import { Navigate } from 'react-router-dom';
 
 const Chat = () => {
@@ -17,7 +18,7 @@ const Chat = () => {
   useEffect(() => {
     const fetchChannels = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/channels', {
+        const response = await fetch(`${API_BASE}/api/channels`, {
           headers: { 'Authorization': `Bearer ${accessToken}` }
         });
         if (response.ok) {
@@ -40,7 +41,7 @@ const Chat = () => {
 
     const fetchMessages = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/api/messages/channel/${activeChannel.id}`, {
+        const response = await fetch(`${API_BASE}/api/messages/channel/${activeChannel.id}`, {
           headers: { 'Authorization': `Bearer ${accessToken}` }
         });
         if (response.ok) {
@@ -48,7 +49,7 @@ const Chat = () => {
           setMessages(data);
           
           // Mark as read
-          fetch(`http://localhost:3001/api/channels/${activeChannel.id}/read`, {
+          fetch(`${API_BASE}/api/channels/${activeChannel.id}/read`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${accessToken}` }
           });

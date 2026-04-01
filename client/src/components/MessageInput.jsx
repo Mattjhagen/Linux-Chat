@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Paperclip, Send, X, FileText, Image as ImageIcon } from 'lucide-react';
 import useStore from '../store/useStore';
+import { API_BASE } from '../config';
 
 const MessageInput = () => {
   const { activeChannel, socket, user, accessToken } = useStore();
@@ -34,7 +35,7 @@ const MessageInput = () => {
     files.forEach(file => formData.append('attachments', file));
 
     try {
-      const response = await fetch(`http://localhost:3001/api/messages/channel/${activeChannel.id}`, {
+      const response = await fetch(`${API_BASE}/api/messages/channel/${activeChannel.id}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`
