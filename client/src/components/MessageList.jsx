@@ -1,18 +1,24 @@
 import React, { useRef, useEffect } from 'react';
-import { FixedSizeList as List } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import useStore from '../store/useStore';
 import MessageItem from './MessageItem';
 
 const MessageList = () => {
   const { messages, activeChannel, typingUsers } = useStore();
-  const listRef = useRef();
+  const parentRef = useRef();
 
   const channelTyping = typingUsers.filter(u => u.channel_id === activeChannel?.id);
 
+  const rowVirtualizer = useVirtualizer({
+    count: messages.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 80,
+    overscan: 5,
+  });
+
   useEffect(() => {
-    if (messages.length > 0 && listRef.current) {
-      listRef.current.scrollToItem(messages.length - 1, 'end');
+    if (messages.length > 0) {
+      rowVirtualizer.scrollToIndex(messages.length - 1, { align: 'end' });
     }
   }, [messages.length, activeChannel?.id]);
 
@@ -30,29 +36,37 @@ const MessageList = () => {
     );
   }
 
-  const Row = ({ index, style }) => (
-    <div style={style}>
-      <MessageItem message={messages[index]} />
-    </div>
-  );
-
   return (
     <div className="flex-1 flex flex-col relative overflow-hidden bg-background-deep">
-      <div className="flex-1 w-full">
-        <AutoSizer>
-          {({ height, width }) => (
-            <List
-              ref={listRef}
-              height={height}
-              width={width}
-              itemCount={messages.length}
-              itemSize={80} // Estimated size
-              className="scrollbar-hide"
+      <div 
+        ref={parentRef}
+        className="flex-1 overflow-y-auto scrollbar-hide"
+        style={{ contain: 'strict' }}
+      >
+        <div
+          style={{
+            height: `${rowVirtualizer.getTotalSize()}px`,
+            width: '100%',
+            position: 'relative',
+          }}
+        >
+          {rowVirtualizer.getVirtualItems().map((virtualRow) => (
+            <div
+              key={virtualRow.key}
+              data-index={virtualRow.index}
+              ref={rowVirtualizer.measureElement}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                transform: `translateY(${virtualRow.start}px)`,
+              }}
             >
-              {Row}
-            </List>
-          )}
-        </AutoSizer>
+              <MessageItem message={messages[virtualRow.index]} />
+            </div>
+          ))}
+        </div>
       </div>
       
       {channelTyping.length > 0 && (
