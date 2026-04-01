@@ -1,0 +1,12 @@
+# Modules
+node_modules/
+
+# Server
+server/.env
+server/data/
+
+# Client
+client/dist/
+
+# System
+.DS_Store
