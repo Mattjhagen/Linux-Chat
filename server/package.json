@@ -15,6 +15,7 @@
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.8.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dompurify": "^3.3.3",
     "dotenv": "^17.3.1",
