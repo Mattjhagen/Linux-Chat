@@ -35,6 +35,8 @@ const io = new Server(httpServer, {
   }
 });
 
+app.set('io', io);
+
 // Middleware
 app.use(helmet({
   contentSecurityPolicy: false,

@@ -129,8 +129,8 @@ router.post('/channel/:channelId', authenticate, upload.array('attachments'), (r
     
     message.attachments = JSON.parse(message.attachments_json || '[]');
     
-    // Broadcast message via Socket.IO - we'll handle this in index.js or socket handler
-    // req.app.get('io').to(`channel-${channelId}`).emit('message:new', message);
+    // Broadcast message via Socket.IO
+    req.app.get('io').to(`channel-${channelId}`).emit('message:new', message);
 
     res.status(201).json(message);
   } catch (err) {
